@@ -1,0 +1,8 @@
+# dataset
+/data/*
+
+# cache
+*.pyc
+
+# model
+*.pth
