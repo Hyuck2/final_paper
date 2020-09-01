@@ -13,8 +13,8 @@ from train import get_model
 
 def define_argparser():
     p = argparse.ArgumentParser()
-    p.add_argument('--model_fn', required=True)
-    p.add_argument('--plot', default=True)
+    p.add_argument('--model_fn', required=True) # Trained model
+    p.add_argument('--plot', default=True) # Plot test Image
     config = p.parse_args()
     return config
 
@@ -42,9 +42,8 @@ def test(model, x, y, plot=True):
 
 if __name__ == '__main__':
     config = define_argparser()
-    model_fn = config.model_fn
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-    train_config, state_dict = load(model_fn, device)
+    train_config, state_dict = load(config.model_fn, device)
     model = get_model(train_config).to(device)
     model.load_state_dict(state_dict)
     print(model)
