@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from functions.data_loader import load_mnist
 from models.model_fully_connected import FullyConnectedClassifier
 from models.model_cnn import ConvolutionalClassifier
+from models.model_rnn import RecurrentClassifier
 
 model_fn = "./example.pth"
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')

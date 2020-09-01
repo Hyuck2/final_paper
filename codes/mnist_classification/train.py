@@ -26,6 +26,8 @@ def get_model(config):
         model = FullyConnectedClassifier(28**2, 10)
     elif config.model == 'cnn':
         model = ConvolutionalClassifier(10)
+    elif config.model == 'rnn':
+        pass
     else:
         raise NotImplementedError('You need to specify model name.')
     return model
