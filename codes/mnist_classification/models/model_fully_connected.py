@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 
-class ImageClassifier(nn.Module):
+
+class FullyConnectedClassifier(nn.Module):
 
     def __init__(self,
                  input_size,
