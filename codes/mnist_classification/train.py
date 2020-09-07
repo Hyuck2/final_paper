@@ -1,3 +1,7 @@
+import sys
+print(sys.path)
+sys.path.append('/home/hyuck2/.local/lib/python3.8/site-packages')
+
 import argparse
 import torch
 import torch.nn as nn
@@ -7,6 +11,10 @@ from functions.data_loader import get_loaders
 from functions.trainer import Trainer
 from models.model_fully_connected import FullyConnectedClassifier
 from models.model_cnn import ConvolutionalClassifier
+
+import torch.cuda.profiler as profiler
+import pyprof
+pyprof.init()
 
 def define_argparser():
     p = argparse.ArgumentParser()
@@ -44,7 +52,7 @@ def main(config):
 
     model = get_model(config).to(device)
     optimizer = optim.Adam(model.parameters())
-    crit = nn.CrossEntropyLoss()
+    crit = nn.CrossEntropyLoss    ()
 
     if config.verbose >= 2:
         print(model)
@@ -55,5 +63,7 @@ def main(config):
     trainer.train(model, crit, optimizer, train_loader, valid_loader)
 
 if __name__ == '__main__':
+    profiler.start()
     config = define_argparser()
     main(config)
+    profiler.stop()
