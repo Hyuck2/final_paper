@@ -63,6 +63,7 @@ def main(config):
     trainer.train(model, crit, optimizer, train_loader, valid_loader)
 
 if __name__ == '__main__':
+    #torch.autograd.profiler.emit_nvtx()
     profiler.start()
     config = define_argparser()
     main(config)

@@ -6,3 +6,6 @@
 
 # model
 *.pth
+
+# log files
+*.log
