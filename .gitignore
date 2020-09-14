@@ -9,3 +9,6 @@
 
 # log files
 *.log
+
+# vscode settings
+.vscode/*
