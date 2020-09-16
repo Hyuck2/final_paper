@@ -12,3 +12,11 @@
 
 # vscode settings
 .vscode/*
+
+# libtorch
+/libtorch/*
+
+# Cmake
+/codes/mnist_classification/build/*
+CMakeLists.txt
+/codes/example/extension/*

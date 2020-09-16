@@ -1,8 +1,9 @@
 import torch
 import torch.nn as nn
-import torch.cuda.profiler as profiler
+import torch.nn.functional as F
 import pyprof
 import math
+
 
 class LLTM(torch.nn.Module):
     def __init__(self, input_features, state_size):
@@ -11,9 +12,9 @@ class LLTM(torch.nn.Module):
         self.state_size = state_size
         # 3 * state_size for input gate, output gate and candidate cell gate.
         # input_features + state_size because we will multiply with [input, h].
-        self.weights = torch.nn.Parameter(
+        self.weights = nn.Parameter(
             torch.empty(3 * state_size, input_features + state_size))
-        self.bias = torch.nn.Parameter(torch.empty(3 * state_size))
+        self.bias = nn.Parameter(torch.empty(3 * state_size))
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -26,14 +27,14 @@ class LLTM(torch.nn.Module):
         X = torch.cat([old_h, input], dim=1)
 
         # Compute the input, output and candidate cell gates with one MM.
-        gate_weights = nn.linear(X, self.weights, self.bias)
+        gate_weights = F.linear(X, self.weights, self.bias)
         # Split the combined gate weight matrix into its components.
         gates = gate_weights.chunk(3, dim=1)
 
         input_gate = torch.sigmoid(gates[0])
         output_gate = torch.sigmoid(gates[1])
         # Here we use an ELU instead of the usual tanh.
-        candidate_cell = nn.elu(gates[2])
+        candidate_cell = F.elu(gates[2])
 
         # Compute the new cell state.
         new_cell = old_cell + candidate_cell * input_gate
