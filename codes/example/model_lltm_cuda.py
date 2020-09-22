@@ -3,13 +3,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 import pyprof
 import math
-import lltm_extension
+import lltm_cuda
+
 
 
 class LLTMFunction(torch.autograd.Function):
     @staticmethod
     def forward(ctx, input, weights, bias, old_h, old_cell):
-        outputs = lltm_extension.forward(input, weights, bias, old_h, old_cell)
+        outputs = lltm_cuda.forward(input, weights, bias, old_h, old_cell)
         new_h, new_cell = outputs[:2]
         variables = outputs[1:] + [weights]
         ctx.save_for_backward(*variables)
@@ -18,7 +19,7 @@ class LLTMFunction(torch.autograd.Function):
     
     @staticmethod
     def backward(ctx, grad_h, grad_cell):
-        outputs = lltm_extension.backward(
+        outputs = lltm_cuda.backward(
             grad_h.contiguous(), grad_cell.contiguous(), *ctx.saved_variables)
         d_old_h, d_input, d_weights, d_bias, d_old_cell = outputs
         return d_input, d_weights, d_bias, d_old_h, d_old_cell
