@@ -10,13 +10,7 @@
 # log files
 *.log
 
-# vscode settings
-.vscode/*
-
-# libtorch
-/libtorch/*
-
-# Cmake
-/codes/mnist_classification/build/*
-CMakeLists.txt
-/codes/example/extension/*
+# build items
+/codes/example/extension/build/*
+/codes/example/extension/dist/*
+*.egg-info
