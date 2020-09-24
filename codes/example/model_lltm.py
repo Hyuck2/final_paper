@@ -12,8 +12,7 @@ class LLTM(torch.nn.Module):
         self.state_size = state_size
         # 3 * state_size for input gate, output gate and candidate cell gate.
         # input_features + state_size because we will multiply with [input, h].
-        self.weights = nn.Parameter(
-            torch.empty(3 * state_size, input_features + state_size))
+        self.weights = nn.Parameter(torch.empty(3 * state_size, input_features + state_size))
         self.bias = nn.Parameter(torch.empty(3 * state_size))
         self.reset_parameters()
 

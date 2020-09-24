@@ -12,13 +12,16 @@
 
 ## Weeks
 - Sep. 2nd week
-  - MNIST Handwritten digit recognition task with CNN model
+  - MNIST Handwritten digit recognition task with CNN model - done
 - Sep. 3rd week
-  - Make LSTM model for MNIST and implement C++
-  - Profiler setting
+  - Make LSTM model for MNIST and implement C++ - done
+  - Profiler setting - done
 - Sep. 4th week
-  - Implement CUDA
+  - Implement CUDA - done
 - Sep. 5th week
+  - Find another application
+  - Writing
+  - Visualization
 - Oct. 2nd week
 - Oct. 3rd week
 - Oct. 4th week
