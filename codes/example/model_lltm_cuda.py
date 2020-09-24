@@ -19,11 +19,9 @@ class LLTMFunction(torch.autograd.Function):
     
     @staticmethod
     def backward(ctx, grad_h, grad_cell):
-        outputs = lltm_cuda.backward(
-            grad_h.contiguous(), grad_cell.contiguous(), *ctx.saved_variables)
-        d_old_h, d_input, d_weights, d_bias, d_old_cell = outputs
+        outputs = lltm_cuda.backward(grad_h.contiguous(), grad_cell.contiguous(), *ctx.saved_variables)
+        d_old_h, d_input, d_weights, d_bias, d_old_cell, dummy = outputs # add dummy for get extra value --> solution for too many values to unpack error
         return d_input, d_weights, d_bias, d_old_h, d_old_cell
-    
 
 class LLTM(torch.nn.Module):
     def __init__(self, input_features, state_size):

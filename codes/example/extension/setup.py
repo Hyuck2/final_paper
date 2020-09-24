@@ -6,3 +6,7 @@ from torch.utils import cpp_extension
 setup(name='lltm_extension',
       ext_modules=[cpp_extension.CppExtension('lltm_extension', ['lltm_extension.cpp'])],
       cmdclass={'build_ext': cpp_extension.BuildExtension})
+
+setup(name='lltm_cuda',
+      ext_modules=[cpp_extension.CppExtension('lltm_cuda', ['lltm_cuda.cu'])],
+      cmdclass={'build_ext': cpp_extension.BuildExtension})
