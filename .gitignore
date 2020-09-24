@@ -13,4 +13,6 @@
 # build items
 /codes/example/extension/build/*
 /codes/example/extension/dist/*
+/codes/mnist_cnn/extension/build/*
+/codes/mnist_cnn/extension/dist/*
 *.egg-info
