@@ -24,6 +24,7 @@ def argparser(): # arguments
     p.add_argument('--verbose', type=bool, default=True)
     p.add_argument('--model', type=str, default='cnn')
     p.add_argument('--model_pth', type=str, default='cnn_pytorch.pth')
+    p.add_argument('--profile', type=bool, default=False)
     config = p.parse_args()
     return config
 

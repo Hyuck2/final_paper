@@ -1,9 +1,8 @@
 # Functions
-## data_loader.py
-   Use for MNIST data loading
-   
+
 ## trainer.py
    Use for training
 
 ## utils.py
-   Other utilities
+   1. data loader
+   2. logger
