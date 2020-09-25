@@ -1,3 +1,6 @@
+# vscode config files
+/.vscode/*
+
 # dataset
 /codes/data/*
 

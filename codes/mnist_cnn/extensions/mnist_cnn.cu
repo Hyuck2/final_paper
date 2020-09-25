@@ -1,8 +1,20 @@
+#include <iostream>
+#include <vector>
 #include <torch/extension.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
-#include <vector>
-#include <iostream>
+
+std::vector<at::Tensor> cnn_forward();
+std::vector<at::Tensor> cnn_backward();
+std::vector<at::Tensor> cnn__cu_forward();
+std::vector<at::Tensor> cnn_cu_backward();
+
+__global__ void cnn_cu_forward_kernel(){
+
+}
+__global__ void cnn_cu_backward_kernel(){
+  
+}
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
     m.def("forward", &cnn_forward, "CNN forward Cpp");

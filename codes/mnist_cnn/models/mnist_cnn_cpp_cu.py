@@ -1,5 +1,4 @@
 import torch
-import torch.nn as nn
 import mnist_cnn # cnn with cpp and cuda
 
 class CNN_cpp_functions(torch.autograd.Function):
@@ -23,8 +22,8 @@ class CNN_cu_functions(torch.autograd.Function):
     def backward():
         pass
 
-class CNN_cpp(nn.module):
+class CNN_cpp(torch.nn.module):
     pass
 
-class CNN_cu(nn.module):
+class CNN_cu(torch.nn.module):
     pass
