@@ -1,6 +1,8 @@
 import torch
 import torch.nn
 import sys
+sys.path.append('/home/hyuck2/.local/lib/python3.8/site-packages')
+import time
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt

@@ -6,7 +6,7 @@
 
 std::vector<at::Tensor> cnn_forward();
 std::vector<at::Tensor> cnn_backward();
-std::vector<at::Tensor> cnn__cu_forward();
+std::vector<at::Tensor> cnn_cu_forward();
 std::vector<at::Tensor> cnn_cu_backward();
 
 __global__ void cnn_cu_forward_kernel(){
