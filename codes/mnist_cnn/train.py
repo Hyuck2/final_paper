@@ -11,7 +11,7 @@ import pyprof
 
 # import models
 from mnist_cnn import CNN # CNN based on python and pytorch
-from mnist_cnn_cpp_cuda import CNN_cpp, CNN_cu # CNN based on cpp and cu
+from extension import CNN_cpp, CNN_cu # CNN based on cpp and cu
 
 # import functions
 from functions.utils import logger, loader

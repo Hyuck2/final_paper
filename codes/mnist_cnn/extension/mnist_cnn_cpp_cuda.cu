@@ -12,8 +12,25 @@ std::vector<at::Tensor> cnn_cu_backward();
 __global__ void cnn_cu_forward_kernel(){
 
 }
+
 __global__ void cnn_cu_backward_kernel(){
   
+}
+
+std::vector<at::Tensor> cnn_forward(){
+
+}
+
+std::vector<at::Tensor> cnn_backward(){
+
+}
+
+std::vector<at::Tensor> cnn_cu_forward(){
+
+}
+
+std::vector<at::Tensor> cnn_cu_backward(){
+
 }
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
@@ -21,4 +38,4 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
     m.def("backward", &cnn_backward, "CNN backward Cpp");
     m.def("cu_forward", &cnn_cu_forward, "CNN forward CUDA");
     m.def("cu_backward", &cnn_cu_backward, "CNN backward CUDA");
-  }
+}
