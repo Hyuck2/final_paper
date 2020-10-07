@@ -20,8 +20,7 @@ class CNN_Block(torch.nn.Module):
 
 
 class CNN(torch.nn.Module):
-    def __init__(self, output_size):
-        self.output_size = output_size
+    def __init__(self):
         super().__init__()
         self.blocks = torch.nn.Sequential( # |x| = (n, 1, 28, 28)
             CNN_Block(1, 32), # (n, 32, 14, 14)
@@ -34,7 +33,7 @@ class CNN(torch.nn.Module):
             torch.nn.Linear(512, 50),
             torch.nn.ReLU(),
             torch.nn.BatchNorm1d(50),
-            torch.nn.Linear(50, output_size),
+            torch.nn.Linear(50, 10),
             torch.nn.Softmax(dim=-1),
         )
 

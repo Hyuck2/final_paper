@@ -4,38 +4,85 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 
-std::vector<at::Tensor> cnn_forward();
-std::vector<at::Tensor> cnn_backward();
-std::vector<at::Tensor> cnn_cu_forward();
-std::vector<at::Tensor> cnn_cu_backward();
+torch::Tensor forward(torch::Tensor input);
+torch::Tensor backward(torch::Tensor loss);
+torch::Tensor cu_forward(torch::Tensor input);
+torch::Tensor cu_backward(torch::Tensor loss);
 
-__global__ void cnn_cu_forward_kernel(){
+__global__ void forward_kernel(){
 
 }
 
-__global__ void cnn_cu_backward_kernel(){
+__global__ void backward_kernel(){
   
 }
 
-std::vector<at::Tensor> cnn_forward(){
+torch::Tensor forward(torch::Tensor input){
 
 }
 
-std::vector<at::Tensor> cnn_backward(){
+torch::Tensor backward(torch::Tensor loss){
 
 }
 
-std::vector<at::Tensor> cnn_cu_forward(){
-
+torch::Tensor cu_forward(torch::Tensor input){
+/*
+    cudamemcpy h2d input
+    forward kernel
+    cudamemcpy d2h output
+*/
 }
 
-std::vector<at::Tensor> cnn_cu_backward(){
+torch::Tensor cu_backward(torch::Tensor loss){
+/*
 
+
+*/
 }
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
-    m.def("forward", &cnn_forward, "CNN forward Cpp");
-    m.def("backward", &cnn_backward, "CNN backward Cpp");
-    m.def("cu_forward", &cnn_cu_forward, "CNN forward CUDA");
-    m.def("cu_backward", &cnn_cu_backward, "CNN backward CUDA");
+    m.def("forward", &forward, "CNN forward Cpp");
+    m.def("backward", &backward, "CNN backward Cpp");
+    m.def("cu_forward", &cu_forward, "CNN forward CUDA");
+    m.def("cu_backward", &cu_backward, "CNN backward CUDA");
 }
+
+/*
+self.layer1 = torch.nn.Sequential(
+    torch.nn.Conv2d(1, 32, (3, 3), padding=1),
+    torch.nn.ReLU(),
+    torch.nn.BatchNorm2d(32),
+    torch.nn.Conv2d(32, 32, (3, 3), stride=2, padding=1),
+    torch.nn.ReLU(),
+    torch.nn.BatchNorm2d(32),
+    torch.nn.Conv2d(32, 64, (3, 3), padding=1),
+    torch.nn.ReLU(),
+    torch.nn.BatchNorm2d(64),
+    torch.nn.Conv2d(64, 64, (3, 3), stride=2, padding=1),
+    torch.nn.ReLU(),
+    torch.nn.BatchNorm2d(64),
+    torch.nn.Conv2d(64, 128, (3, 3), padding=1),
+    torch.nn.ReLU(),
+    torch.nn.BatchNorm2d(128),
+    torch.nn.Conv2d(128, 128, (3, 3), stride=2, padding=1),
+    torch.nn.ReLU(),
+    torch.nn.BatchNorm2d(128),
+    torch.nn.Conv2d(128, 256, (3, 3), padding=1),
+    torch.nn.ReLU(),
+    torch.nn.BatchNorm2d(256),
+    torch.nn.Conv2d(256, 256, (3, 3), stride=2, padding=1),
+    torch.nn.ReLU(),
+    torch.nn.BatchNorm2d(256),
+    torch.nn.Conv2d(256, 512, (3, 3), padding=1),
+    torch.nn.ReLU(),
+    torch.nn.BatchNorm2d(512),
+    torch.nn.Conv2d(512, 512, (3, 3), stride=2, padding=1),
+    torch.nn.ReLU(),
+    torch.nn.BatchNorm2d(512),)
+self.layer2 = torch.nn.Sequential(
+    torch.nn.Linear(512, 50),
+    torch.nn.ReLU(),
+    torch.nn.BatchNorm1d(50),
+    torch.nn.Linear(50, output_size), # MNIST--> outputsize = 10
+    torch.nn.Softmax(dim=-1),)
+*/

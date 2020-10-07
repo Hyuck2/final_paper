@@ -34,37 +34,29 @@ def argparser(): # arguments
 
 def get_model(config):
     if config.model == 'cnn_cpp':
-        pass
+        model = CNN_cpp()
     elif config.model == 'cnn_cuda':
-        pass
-    elif config.model == 'cnn_cpp_cuda':
-        pass
+        model = CNN_cu()
     elif config.model == 'cnn':
-        model = CNN(10)
+        model = CNN()
     else:
         raise NotImplementedError('You need to specify model name.')
-
     return model
 
 def main(config):
     # Set device based on user defined configuration.
     device = torch.device('cpu') if config.gpu is False else torch.device('cuda')
-
     train_loader, valid_loader, test_loader = loader(config)
-
     print("Train:", len(train_loader.dataset))
     print("Valid:", len(valid_loader.dataset))
     print("Test:", len(test_loader.dataset))
-
     model = get_model(config).to(device)
     optimizer = torch.optim.Adam(model.parameters())
     crit = torch.nn.CrossEntropyLoss()
-
     if config.verbose >= 2:
         print(model)
         print(optimizer)
         print(crit)
-
     trainer = Trainer(config)
     trainer.train(model, crit, optimizer, train_loader, valid_loader)
 
