@@ -17,8 +17,56 @@ __global__ void backward_kernel(){
   
 }
 
-torch::Tensor forward(torch::Tensor input){
+torch::Tensor forward(torch::Tensor input, torch::Tensor weight, torch::Tensor bias){
+    torch::Tensor output;
+    output = torch::conv2d(input, weight, bias, 0/*stride*/, 1 /*padding*/, /*dilation*/, /*groups*/); // stride , padding, dilation, groups
+    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
+    output = torch::batch_norm(ouput, weight, bias)
 
+    output = torch::conv2d(input, weight, bias, 2 /*stride*/, 1 /*padding*/, /*dilation*/, /*groups*/); // stride , padding, dilation, groups
+    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
+    output = torch::batch_norm(ouput, weight, bias)
+
+    output = torch::conv2d(input, weight, bias, /*stride*/, 1 /*padding*/, /*dilation*/, /*groups*/); // stride , padding, dilation, groups
+    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
+    output = torch::batch_norm(ouput, weight, bias)
+
+    output = torch::conv2d(input, weight, bias, 2 /*stride*/, 1 /*padding*/, /*dilation*/, /*groups*/); // stride , padding, dilation, groups
+    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
+    output = torch::batch_norm(ouput, weight, bias)
+
+    output = torch::conv2d(input, weight, bias, /*stride*/, 1 /*padding*/, /*dilation*/, /*groups*/); // stride , padding, dilation, groups
+    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
+    output = torch::batch_norm(ouput, weight, bias)
+
+    output = torch::conv2d(input, weight, bias, 2 /*stride*/, 1 /*padding*/, /*dilation*/, /*groups*/); // stride , padding, dilation, groups
+    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
+    output = torch::batch_norm(ouput, weight, bias)
+
+    output = torch::conv2d(input, weight, bias, /*stride*/, 1 /*padding*/, /*dilation*/, /*groups*/); // stride , padding, dilation, groups
+    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
+    output = torch::batch_norm(ouput, weight, bias)
+
+    output = torch::conv2d(input, weight, bias, 2 /*stride*/, 1 /*padding*/, /*dilation*/, /*groups*/); // stride , padding, dilation, groups
+    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
+    output = torch::batch_norm(ouput, weight, bias)
+
+    output = torch::conv2d(input, weight, bias, /*stride*/, 1 /*padding*/, /*dilation*/, /*groups*/); // stride , padding, dilation, groups
+    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
+    output = torch::batch_norm(ouput, weight, bias)
+
+    output = torch::conv2d(input, weight, bias, 2 /*stride*/, 1 /*padding*/, /*dilation*/, /*groups*/); // stride , padding, dilation, groups
+    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
+    output = torch::batch_norm(ouput, weight, bias)
+
+    // squeeze
+    output = torch::linear()
+    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
+    output = torch::batch_norm(ouput, weight, bias)
+    output = torch::linear()
+    // softmax
+
+    return output
 }
 
 torch::Tensor backward(torch::Tensor loss){
