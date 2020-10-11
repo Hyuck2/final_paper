@@ -46,9 +46,10 @@ class CNN_cpp(torch.nn.Module):
 
     def forward(self, x):
         return mnist_cnn_cpp_cuda.forward(x, self.weight, self.bias)
-    
+    '''
     def backward(self, loss):
         return mnist_cnn_cpp_cuda.backward(loss, self.weight, self.bias)
+    '''
 
 class CNN_cu(torch.nn.Module):
     def __init__(self):

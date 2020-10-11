@@ -50,6 +50,7 @@ torch::Tensor forward(torch::Tensor input, torch::Tensor weight, torch::Tensor b
     //output = torch::batch_norm(output, weight, bias);
     output = torch::linear(output, weight, bias);
     // softmax
+    output = torch::softmax(output)
     return output;
 }
 
@@ -59,7 +60,7 @@ torch::Tensor backward(torch::Tensor loss){
     return weight;
 }
 
-torch::Tensor cu_forward(torch::Tensor input){
+torch::Tensor cu_forward(torch::Tensor input, torch::Tensor weight, torch::Tensor bias){
 /*
     cudamemcpy h2d input
     forward kernel
