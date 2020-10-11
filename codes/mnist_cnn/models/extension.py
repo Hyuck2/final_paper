@@ -37,7 +37,7 @@ class CNN_cpp(torch.nn.Module):
             torch.nn.Conv2d(512, 512, (3, 3), stride=2, padding=1),
             torch.nn.ReLU(),
             torch.nn.BatchNorm2d(512),
-            torch.nn.squeeze(),
+            #torch.nn.squeeze(),
             torch.nn.Linear(512, 50),
             torch.nn.ReLU(),
             torch.nn.BatchNorm1d(50),

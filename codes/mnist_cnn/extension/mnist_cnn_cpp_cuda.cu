@@ -49,8 +49,7 @@ torch::Tensor forward(torch::Tensor input, torch::Tensor weight, torch::Tensor b
     output = torch::relu(output); // if inplace == True: return relu_, else: return relu
     //output = torch::batch_norm(output, weight, bias);
     output = torch::linear(output, weight, bias);
-    // softmax
-    output = torch::softmax(output)
+    // output = torch::softmax(output);
     return output;
 }
 
