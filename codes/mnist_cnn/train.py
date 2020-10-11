@@ -7,7 +7,7 @@ import argparse
 from tqdm import tqdm
 import torch
 import torch.cuda.profiler as profiler
-import pyprof
+#import pyprof
 
 # import models
 from mnist_cnn import CNN # CNN based on python and pytorch

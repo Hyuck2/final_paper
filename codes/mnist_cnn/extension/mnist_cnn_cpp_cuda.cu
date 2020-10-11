@@ -4,11 +4,6 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 
-torch::Tensor forward(torch::Tensor input);
-torch::Tensor backward(torch::Tensor loss);
-torch::Tensor cu_forward(torch::Tensor input);
-torch::Tensor cu_backward(torch::Tensor loss);
-
 __global__ void forward_kernel(){
 
 }
@@ -20,57 +15,48 @@ __global__ void backward_kernel(){
 torch::Tensor forward(torch::Tensor input, torch::Tensor weight, torch::Tensor bias){
     torch::Tensor output;
     output = torch::conv2d(input, weight, bias, 1 /*stride*/, 1 /*padding*/, 1 /*dilation*/, 1 /*groups*/); // stride , padding, dilation, groups
-    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
-    output = torch::batch_norm(ouput, weight, bias)
-
+    output = torch::relu(output); // if inplace == True: return relu_, else: return relu
+    //output = torch::batch_norm(output, weight, bias);
     output = torch::conv2d(output, weight, bias, 2 /*stride*/, 1 /*padding*/, 1 /*dilation*/, 1 /*groups*/); // stride , padding, dilation, groups
-    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
-    output = torch::batch_norm(output, weight, bias)
-
+    output = torch::relu(output); // if inplace == True: return relu_, else: return relu
+    //output = torch::batch_norm(output, weight, bias);
     output = torch::conv2d(output, weight, bias, 1 /*stride*/, 1 /*padding*/, 1 /*dilation*/, 1 /*groups*/); // stride , padding, dilation, groups
-    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
-    output = torch::batch_norm(output, weight, bias)
-
+    output = torch::relu(output); // if inplace == True: return relu_, else: return relu
+    //output = torch::batch_norm(output, weight, bias);
     output = torch::conv2d(output, weight, bias, 2 /*stride*/, 1 /*padding*/, 1 /*dilation*/, 1 /*groups*/); // stride , padding, dilation, groups
-    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
-    output = torch::batch_norm(output, weight, bias)
-
+    output = torch::relu(output); // if inplace == True: return relu_, else: return relu
+    //output = torch::batch_norm(output, weight, bias);
     output = torch::conv2d(output, weight, bias, 1 /*stride*/, 1 /*padding*/, 1 /*dilation*/, 1 /*groups*/); // stride , padding, dilation, groups
-    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
-    output = torch::batch_norm(output, weight, bias)
-
-    output = torch::conv2d(output, weight, bias, 2 /*stride*/, 1 /*padding*/, 1 /*dilation*/, /*groups*/); // stride , padding, dilation, groups
-    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
-    output = torch::batch_norm(output, weight, bias)
-
+    output = torch::relu(output); // if inplace == True: return relu_, else: return relu
+    //output = torch::batch_norm(output, weight, bias);
+    output = torch::conv2d(output, weight, bias, 2 /*stride*/, 1 /*padding*/, 1 /*dilation*/, 1/*groups*/); // stride , padding, dilation, groups
+    output = torch::relu(output); // if inplace == True: return relu_, else: return relu
+    //output = torch::batch_norm(output, weight, bias);
     output = torch::conv2d(output, weight, bias, 1 /*stride*/, 1 /*padding*/, 1 /*dilation*/, 1 /*groups*/); // stride , padding, dilation, groups
-    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
-    output = torch::batch_norm(output, weight, bias)
-
+    output = torch::relu(output); // if inplace == True: return relu_, else: return relu
+    //output = torch::batch_norm(output, weight, bias);
     output = torch::conv2d(output, weight, bias, 2 /*stride*/, 1 /*padding*/, 1 /*dilation*/, 1 /*groups*/); // stride , padding, dilation, groups
-    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
-    output = torch::batch_norm(output, weight, bias)
-
+    output = torch::relu(output); // if inplace == True: return relu_, else: return relu
+    //output = torch::batch_norm(output, weight, bias);
     output = torch::conv2d(output, weight, bias, 1 /*stride*/, 1 /*padding*/, 1 /*dilation*/, 1 /*groups*/); // stride , padding, dilation, groups
-    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
-    output = torch::batch_norm(output, weight, bias)
-
+    output = torch::relu(output); // if inplace == True: return relu_, else: return relu
+    //output = torch::batch_norm(output, weight, bias);
     output = torch::conv2d(output, weight, bias, 2 /*stride*/, 1 /*padding*/, 1 /*dilation*/, 1 /*groups*/); // stride , padding, dilation, groups
-    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
-    output = torch::batch_norm(otuput, weight, bias)
-
+    output = torch::relu(output); // if inplace == True: return relu_, else: return relu
+    //output = torch::batch_norm(output, weight, bias);
     // squeeze
-    output = torch::linear(output, weight, bias)
-    output = torch::relu(output, 0) // if inplace == True: return relu_, else: return relu
-    output = torch::batch_norm(ouput, weight, bias)
-    output = torch::linear(output, weight, bias)
+    output = torch::linear(output, weight, bias);
+    output = torch::relu(output); // if inplace == True: return relu_, else: return relu
+    //output = torch::batch_norm(output, weight, bias);
+    output = torch::linear(output, weight, bias);
     // softmax
-
-    return output
+    return output;
 }
 
 torch::Tensor backward(torch::Tensor loss){
-
+    torch::Tensor weight;
+    torch::Tensor bias;
+    return weight;
 }
 
 torch::Tensor cu_forward(torch::Tensor input){
@@ -79,6 +65,8 @@ torch::Tensor cu_forward(torch::Tensor input){
     forward kernel
     cudamemcpy d2h output
 */
+    torch::Tensor output;
+    return output;
 }
 
 torch::Tensor cu_backward(torch::Tensor loss){
@@ -86,6 +74,9 @@ torch::Tensor cu_backward(torch::Tensor loss){
 
 
 */
+    torch::Tensor weight;
+    torch::Tensor bias;
+    return weight;
 }
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
