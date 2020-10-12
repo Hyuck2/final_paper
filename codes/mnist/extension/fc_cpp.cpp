@@ -22,5 +22,4 @@ torch::Tensor forward(torch::Tensor input, std::vector<torch::Tensor> parameter)
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   m.def("forward", &forward, "Fully connected forward (CPP)");
-  //m.def("backward", &backward, "Fully connected backward (CPP)");
 }

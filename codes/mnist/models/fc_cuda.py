@@ -22,4 +22,4 @@ class fc(torch.nn.Module):
         self.softmax = torch.nn.Softmax(dim=-1)
 
     def forward(self, x, parameter = []):
-        return fc_cpp.forward(x, parameter)
+        return fc_cuda.forward(x, parameter)

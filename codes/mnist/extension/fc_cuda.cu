@@ -3,6 +3,10 @@
 #include <cuda_runtime.h>
 #include <vector>
 
+__global__ void forward_kernel(){
+
+}
+
 torch::Tensor forward(torch::Tensor input, std::vector<torch::Tensor> parameter){
     torch::Tensor output;
     
@@ -10,6 +14,5 @@ torch::Tensor forward(torch::Tensor input, std::vector<torch::Tensor> parameter)
 }
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
-    m.def("forward", &forward, "cnn forward (CUDA)");
-    //m.def("backward", &backward, "cnn backward (CUDA)");
+    m.def("forward", &forward, "cnn forward (CUDA)");    
   }
