@@ -18,4 +18,6 @@
 /codes/example/extension/dist/*
 /codes/mnist_cnn/extension/build/*
 /codes/mnist_cnn/extension/dist/*
+/codes/mnist/extension/build/*
+/codes/mnist/extension/dist/*
 *.egg-info

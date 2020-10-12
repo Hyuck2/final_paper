@@ -45,11 +45,13 @@ torch::Tensor forward(torch::Tensor input, torch::Tensor weight, torch::Tensor b
     output = torch::relu(output); // if inplace == True: return relu_, else: return relu
     //output = torch::batch_norm(output, weight, bias);
     // squeeze
+    output=torch::squeeze(output)
     output = torch::linear(output, weight, bias);
     output = torch::relu(output); // if inplace == True: return relu_, else: return relu
     //output = torch::batch_norm(output, weight, bias);
     output = torch::linear(output, weight, bias);
     // output = torch::softmax(output);
+
     return output;
 }
 

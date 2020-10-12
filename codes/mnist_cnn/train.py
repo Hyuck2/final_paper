@@ -61,46 +61,6 @@ def get_model(config):
         raise NotImplementedError('You need to specify model name.')
     return model
 
-def main_tqdm(config):
-    device = torch.device('cpu') if config.gpu is False else torch.device('cuda')
-    model = get_model(config)
-
-    x, y = load_mnist(is_train=True)
-    x = x.view(x.size(0), -1)
-
-    train_cnt = int(x.size(0) * config.train_ratio)
-    valid_cnt = x.size(0) - train_cnt
-
-    # Shuffle dataset to split into train/valid set.
-    indices = torch.randperm(x.size(0))
-    x = torch.index_select(
-        x,
-        dim=0,
-        index=indices
-    ).to(device).split([train_cnt, valid_cnt], dim=0)
-    y = torch.index_select(
-        y,
-        dim=0,
-        index=indices
-    ).to(device).split([train_cnt, valid_cnt], dim=0)
-
-    print("Train:", x[0].shape, y[0].shape)
-    print("Valid:", x[1].shape, y[1].shape)
-    
-    # time
-    forward = 0
-    backward = 0
-    for _ in tqdm(range(config.n_epochs)):
-        start = time.time()
-
-        forward += time.time() - start
-        start = time.time()
-
-        backward += time.time() - start
-    print('Forward exec time : ' + str(forward))
-    print('backward exec time : ' + str(backward))
-
-
 def main(config):
     # Set device based on user defined configuration.
     device = torch.device('cpu') if config.gpu is False else torch.device('cuda')
@@ -121,4 +81,3 @@ def main(config):
 if __name__ == "__main__":
     config = argparser()
     main(config)
-    #main_tqdm(config)

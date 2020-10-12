@@ -4,8 +4,10 @@ import mnist_cnn_cpp_cuda # cnn with cpp and cuda
 class CNN_cpp(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        self.weight = torch.nn.Parameter()
-        self.bias = torch.nn.Parameter()
+        self.layer_00 = torch.nn.Conv2d(1, 32, (3, 3), padding=1)
+        self.layer_00.weight = torch.nn.Parameter(torch.zeros(1,0,32))
+        print(list(self.parameters()))
+        '''
         self.layer = torch.nn.Sequential(
             torch.nn.Conv2d(1, 32, (3, 3), padding=1),
             torch.nn.ReLU(),
@@ -43,9 +45,12 @@ class CNN_cpp(torch.nn.Module):
             torch.nn.BatchNorm1d(50),
             torch.nn.Linear(50, 10), # MNIST--> outputsize = 10
             torch.nn.Softmax(dim=-1),)
+        '''
 
     def forward(self, x):
-        return mnist_cnn_cpp_cuda.forward(x, self.weight, self.bias)
+        output = self.layer_00(x)
+        print(output)
+        #return mnist_cnn_cpp_cuda.forward(x)
     '''
     def backward(self, loss):
         return mnist_cnn_cpp_cuda.backward(loss, self.weight, self.bias)
