@@ -1,7 +1,7 @@
 import sys
 sys.path.append('/home/hyuck2/.local/lib/python3.8/site-packages')
 import torch
-
+import fc_cuda
 
 class fc(torch.nn.Module):
     def __init__(self):
@@ -21,19 +21,5 @@ class fc(torch.nn.Module):
         self.linear_06 = torch.nn.Linear(50, 10)
         self.softmax = torch.nn.Softmax(dim=-1)
 
-    def forward(self, x, parameter=[]):
-        y = self.linear_00(x)
-        y = self.relu_00(y)
-        y = self.linear_01(y)
-        y = self.relu_01(y)
-        y = self.linear_02(y)
-        y = self.relu_02(y)
-        y = self.linear_03(y)
-        y = self.relu_03(y)
-        y = self.linear_04(y)
-        y = self.relu_04(y)
-        y = self.linear_05(y)
-        y = self.relu_05(y)
-        y = self.linear_06(y)
-        y = self.softmax(y)
-        return y
+    def forward(self, x, parameter = []):
+        return fc_cpp.forward(x, parameter)

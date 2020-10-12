@@ -4,15 +4,15 @@ import argparse
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import time
-from tqdm import tqdm
+from utils.utils import load_mnist
+from functions.trainer import trainer
+
 from models.cnn_cpp import cnn as cnn_cpp
 from models.cnn_cuda import cnn as cnn_cuda
 from models.cnn import cnn
 from models.fc import fc
 from models.fc_cpp import fc as fc_cpp
-from utils.utils import load_mnist
-from functions.trainer import trainer
+from models.fc_cuda import fc as fc_cuda
 
 def argparser(): # arguments
     p = argparse.ArgumentParser()
@@ -20,7 +20,7 @@ def argparser(): # arguments
     p.add_argument('--n_epoch', type=int, default=10)
     p.add_argument('--train_ratio', type=float, default=.8)
     p.add_argument('--batch_size', type=int, default=64)
-    p.add_argument('--verbose', default=True)
+    p.add_argument('--verbose', default=False)
     p.add_argument('--model', default='fc')
     config = p.parse_args()
     return config
@@ -42,12 +42,17 @@ if __name__ == "__main__":
         model = cnn_cuda().to(device)
     elif config.model == 'fc_cpp':
         model = fc_cpp().to(device)
+    elif config.model == 'fc_cuda':
+        model = fc_cuda().to(device)
     else:
         model = fc().to(device)
+    
     print(len(list(model.parameters())))
+    #print(type(model.parameters()))
     for par in list(model.parameters()):
         print(len(par))
-
+        #print(type(par))
+    
     # data loader
     x, y = load_mnist(is_train=True)
     x = x.view(x.size(0), -1)
@@ -69,6 +74,3 @@ if __name__ == "__main__":
     crit = nn.CrossEntropyLoss()
     trainer = trainer(model, config, optimizer, crit)
     trainer.train((x[0], y[0]), (x[1], y[1]))
-
-    if not config.verbose:
-        pass

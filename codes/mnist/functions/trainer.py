@@ -17,38 +17,28 @@ class trainer():
         x = torch.index_select(x, dim=0, index=indices).split(self.config.batch_size, dim=0)
         y = torch.index_select(y, dim=0, index=indices).split(self.config.batch_size, dim=0)
         total_loss = 0
-        for i, (x_i, y_i) in enumerate(zip(x, y)):
-            y_hat_i = self.model(x_i)
+        for i, (x_i, y_i) in tqdm(enumerate(zip(x, y))):
+            y_hat_i = self.model(x_i, list(self.model.parameters()))
             loss_i = self.crit(y_hat_i, y_i.squeeze())
-
-            # Initialize the gradients of the model.
             self.optimizer.zero_grad()
             loss_i.backward()
-
             self.optimizer.step()
-
             if self.config.verbose:
                 print("Train Iteration(%d/%d): loss=%.4e" % (i + 1, len(x), float(loss_i)))
-
-            # Don't forget to detach to prevent memory leak.
             total_loss += float(loss_i)
 
         return total_loss / len(x)
 
 
     def _validate(self, x, y):
-        # Turn evaluation mode on.
         self.model.eval()
-
-        # Turn on the no_grad mode to make more efficintly.
         with torch.no_grad():
-            # Shuffle before begin.
             indices = torch.randperm(x.size(0), device=x.device)
             x = torch.index_select(x, dim=0, index=indices).split(self.config.batch_size, dim=0)
             y = torch.index_select(y, dim=0, index=indices).split(self.config.batch_size, dim=0)
             total_loss = 0
-            for i, (x_i, y_i) in enumerate(zip(x, y)):
-                y_hat_i = self.model(x_i)
+            for i, (x_i, y_i) in tqdm(enumerate(zip(x, y))):
+                y_hat_i = self.model(x_i, list(self.model.parameters()))
                 loss_i = self.crit(y_hat_i, y_i.squeeze())
                 if self.config.verbose:
                     print("Valid Iteration(%d/%d): loss=%.4e" % (i + 1, len(x), float(loss_i)))

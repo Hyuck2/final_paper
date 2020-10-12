@@ -5,3 +5,6 @@ import torch
 class cnn(torch.nn.Module):
     def __init__(self):
         super().__init__()
+    
+    def forward():
+        return
