@@ -33,7 +33,8 @@ if __name__ == "__main__":
         device = torch.device('cuda:0')
     else:
         device = torch.device('cpu')
-
+    
+    # model save and load function needed
     if config.model == 'cnn':
         model = cnn().to(device)
     elif config.model == 'cnn_cpp':
@@ -48,28 +49,43 @@ if __name__ == "__main__":
         model = fc().to(device)
     
     if config.check:
+        print("Parameters")
         print(len(list(model.parameters())))
         print(type(model.parameters()))
         for par in list(model.parameters()):
             print(len(par))
             print(type(par))
+        print("Buffers")
+        print(len(list(model.buffers())))
+        print(type(model.buffers()))
+        for buf in list(model.buffers()):
+            print(len(buf))
+            print(type(buf))
 
     else:
-        x, y = load_mnist(is_train=True)
-        x = x.view(x.size(0), -1)
+        x, y = load_mnist(is_train=True, flatten=False)
+        if config.model == 'fc' or config.model == 'fc_cpp' or config.model == 'fc_cuda':
+            flatten = True
+            x = x.view(x.size(0), -1)
+        else:
+            flatten = False
+
         train_cnt = int(x.size(0) * config.train_ratio)
         valid_cnt = x.size(0) - train_cnt
         indices = torch.randperm(x.size(0))
+        
         x = torch.index_select(
             x,
             dim=0,
             index=indices
         ).to(device).split([train_cnt, valid_cnt], dim=0)
+        
         y = torch.index_select(
             y,
             dim=0,
             index=indices
         ).to(device).split([train_cnt, valid_cnt], dim=0)
+        
         optimizer = optim.Adam(model.parameters())
         crit = nn.CrossEntropyLoss()
         trainer = trainer(model, config, optimizer, crit)
