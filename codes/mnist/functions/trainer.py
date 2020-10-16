@@ -1,8 +1,8 @@
 from copy import deepcopy
 import time
-from tqdm import tqdm
 import torch
 import numpy
+from tqdm import tqdm
 
 class trainer():
     def __init__(self, model, config, optimizer, crit):

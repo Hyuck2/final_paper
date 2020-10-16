@@ -2,8 +2,6 @@ import sys
 sys.path.append('/home/hyuck2/.local/lib/python3.8/site-packages')
 import argparse
 import torch
-import torch.nn as nn
-import torch.optim as optim
 #utilities
 from utils.utils import load_mnist
 from functions.trainer import trainer
@@ -24,6 +22,7 @@ def argparser(): # arguments
     p.add_argument('--verbose', default=False)
     p.add_argument('--model', default='fc')
     p.add_argument('--check', default=False)
+    p.add_argument('--profile', default=False)
     config = p.parse_args()
     return config
 
@@ -86,7 +85,13 @@ if __name__ == "__main__":
             index=indices
         ).to(device).split([train_cnt, valid_cnt], dim=0)
         
-        optimizer = optim.Adam(model.parameters())
-        crit = nn.CrossEntropyLoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        crit = torch.nn.CrossEntropyLoss()
         trainer = trainer(model, config, optimizer, crit)
-        trainer.train((x[0], y[0]), (x[1], y[1]))
+        if config.profile:
+            with torch.autograd.profiler.profile(record_shapes=True) as result:
+                with torch.autograd.profiler.record_function("Trainer"):
+                    trainer.train((x[0], y[0]), (x[1], y[1]))
+            print(result.key_averages().table(sort_by="cpu_time_total", row_limit=10))        
+        else:
+            trainer.train((x[0], y[0]), (x[1], y[1]))
