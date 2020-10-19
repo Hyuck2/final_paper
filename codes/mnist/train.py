@@ -48,18 +48,15 @@ if __name__ == "__main__":
         model = fc().to(device)
     
     if config.check:
-        print("Parameters")
-        print(len(list(model.parameters())))
-        print(type(model.parameters()))
+        print("Number of Parameters : " + str(len(list(model.parameters()))))
+        #print(type(model.parameters()))
         for par in list(model.parameters()):
-            print(len(par))
-            print(type(par))
-        print("Buffers")
-        print(len(list(model.buffers())))
-        print(type(model.buffers()))
-        for buf in list(model.buffers()):
-            print(len(buf))
-            print(type(buf))
+            print("Size of parameter : " + str(len(par)))
+            #print(type(par))
+        print("weight")
+        print(list(model.parameters())[0][0])
+        print("bias")
+        print(list(model.parameters())[1][0])
 
     else:
         x, y = load_mnist(is_train=True, flatten=False)
