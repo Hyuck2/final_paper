@@ -13,7 +13,7 @@ from models.fc import fc
 from models.fc_cpp import fc as fc_cpp
 from models.fc_cuda import fc as fc_cuda
 
-def argparser(): # arguments
+def argparser():
     p = argparse.ArgumentParser()
     p.add_argument('--gpu', default=False)
     p.add_argument('--n_epoch', type=int, default=10)

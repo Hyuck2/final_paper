@@ -37,3 +37,5 @@ class fc(torch.nn.Module):
         y = self.linear_06(y)
         y = self.softmax(y)
         return y
+
+# use sequential to look prettier

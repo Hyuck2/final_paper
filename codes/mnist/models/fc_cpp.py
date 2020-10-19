@@ -23,3 +23,5 @@ class fc(torch.nn.Module):
 
     def forward(self, x, parameter = []):
         return fc_cpp.forward(x, parameter)
+
+# use sequential to look prettier
