@@ -65,10 +65,21 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
 }
 
 /*  
+    in sequential approach
+for h in range(channel):
+    for i in range(parameter):
+        for j in range(width):
+            for k in range(height):
+                for l in range(kernel_size):
+                    conv
+
+
+
+
     1, 28, 28
     32, 14, 14
     64, 7, 7
-    128, 4, 4output = squeeze(output);
+    128, 4, 4
     256, 2, 2
     512, 1, 1
     512

@@ -17,6 +17,7 @@ class ConvolutionBlock(torch.nn.Module):
     def forward(self, x):
         y = self.layers(x)
         return y
+        
 class cnn(torch.nn.Module):
     def __init__(self):
         super().__init__()
