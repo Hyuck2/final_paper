@@ -68,3 +68,4 @@ class trainer():
         elasped_time = time.time() - elasped_time
         print("time spent : " + str(elasped_time))
         self.model.load_state_dict(best_model)
+        torch.save(self.model.state_dict(best_model), self.config.model_dict)

@@ -12,6 +12,9 @@ from models.cnn import cnn
 from models.fc import fc
 from models.fc_cpp import fc as fc_cpp
 from models.fc_cuda import fc as fc_cuda
+from models.rnn import rnn
+from models.rnn_cpp import rnn as rnn_cpp
+from models.rnn_cuda import rnn as rnn_cuda
 
 def argparser():
     p = argparse.ArgumentParser()
@@ -19,12 +22,33 @@ def argparser():
     p.add_argument('--n_epoch', type=int, default=10)
     p.add_argument('--train_ratio', type=float, default=.8)
     p.add_argument('--batch_size', type=int, default=64)
-    p.add_argument('--verbose', default=False)
+    p.add_argument('--verbose', type=bool, default=False)
     p.add_argument('--model', default='fc')
-    p.add_argument('--check', default=False)
-    p.add_argument('--profile', default=False)
+    p.add_argument('--model_dict', type=str)
+    p.add_argument('--check', type=bool, default=False)
+    p.add_argument('--profile', type=bool, default=False)
     config = p.parse_args()
     return config
+
+def get_model(config):
+    if config.model == 'cnn':
+        return cnn()
+    elif config.model == 'cnn_cpp':
+        return cnn_cpp()
+    elif config.model == 'cnn_cuda':
+        return cnn_cuda()
+    elif config.model == 'fc_cpp':
+        return fc_cpp()
+    elif config.model == 'fc_cuda':
+        return fc_cuda()
+    elif config.model == 'rnn':
+        return rnn()
+    elif config.model == 'rnn_cpp':
+        return rnn_cpp()
+    elif config.model == 'rnn_cuda':
+        return rnn_cuda()
+    else:
+        return fc()
 
 if __name__ == "__main__":
     config = argparser()
@@ -34,6 +58,7 @@ if __name__ == "__main__":
         device = torch.device('cpu')
     
     # model save and load function needed
+    '''
     if config.model == 'cnn':
         model = cnn().to(device)
     elif config.model == 'cnn_cpp':
@@ -44,9 +69,16 @@ if __name__ == "__main__":
         model = fc_cpp().to(device)
     elif config.model == 'fc_cuda':
         model = fc_cuda().to(device)
+    elif config.model == 'rnn':
+        model = rnn().to(device)
+    elif config.model == 'rnn_cpp':
+        model = rnn_cpp().to(device)
+    elif config.model == 'rnn_cuda':
+        model = rnn_cuda().to(device)
     else:
         model = fc().to(device)
-    
+    '''
+    model = get_model(config).to(device)
     if config.check:
         print("Number of Parameters : " + str(len(list(model.parameters()))))
         #print(type(model.parameters()))
