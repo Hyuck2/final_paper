@@ -18,20 +18,22 @@ class trainer():
         y = torch.index_select(y, dim=0, index=indices).split(self.config.batch_size, dim=0)
         total_loss = 0
         forward = 0
+        backward = 0
         for i, (x_i, y_i) in tqdm(enumerate(zip(x, y))):
             start = time.time()
             y_hat_i = self.model(x_i, list(self.model.parameters()))
             forward += time.time() - start
             loss_i = self.crit(y_hat_i, y_i.squeeze())
             self.optimizer.zero_grad()
+            start = time.time()
             loss_i.backward()
+            backward += time.time() - start
             self.optimizer.step()
             if self.config.verbose:
                 print("Train Iteration(%d/%d): loss=%.4e" % (i + 1, len(x), float(loss_i)))
             total_loss += float(loss_i)
-        print("forward time = " + str(forward))
+        print("forward time = " + str(forward) + "backward time = " + str(backward))
         return total_loss / len(x)
-
 
     def _validate(self, x, y):
         self.model.eval()
