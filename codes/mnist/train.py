@@ -19,7 +19,7 @@ from models.rnn_cuda import rnn as rnn_cuda
 def argparser():
     p = argparse.ArgumentParser()
     p.add_argument('--gpu', default=False)
-    p.add_argument('--n_epoch', type=int, default=10)
+    p.add_argument('--n_epoch', type=int, default=20)
     p.add_argument('--train_ratio', type=float, default=.8)
     p.add_argument('--batch_size', type=int, default=64)
     p.add_argument('--verbose', type=bool, default=False)
