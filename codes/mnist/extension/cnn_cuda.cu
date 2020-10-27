@@ -3,6 +3,19 @@
 #include <cuda_runtime.h>
 #include <vector>
 
+__global__ void conv2d_ex(torch::Tensor *d_input, torch::Tensor *d_weight, torch::Tensor *d_bias){
+    /*
+    thread : output channel size
+    block : input channel size
+    */
+    __shared__ float input[];
+    __shared__ float output[];
+    if(threadIdx.x == 0){
+        // load 1 channel from input and save to Shared Memory
+    }
+    __syncthreads();
+}
+
 /*
     __syncthreads();
     for (int step = 1; step < 64; step*=2){
