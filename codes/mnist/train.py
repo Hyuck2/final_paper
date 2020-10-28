@@ -15,6 +15,9 @@ from models.fc_cuda import fc as fc_cuda
 from models.rnn import rnn
 from models.rnn_cpp import rnn as rnn_cpp
 from models.rnn_cuda import rnn as rnn_cuda
+# profile
+import torch.cuda.profiler as profiler
+import pyprof # CUDA profiler
 
 def argparser():
     p = argparse.ArgumentParser()
@@ -57,6 +60,9 @@ if __name__ == "__main__":
     else:
         device = torch.device('cpu')
     
+    if config.profile:
+        pyprof.init()
+
     # model save and load function needed
     '''
     if config.model == 'cnn':
@@ -118,9 +124,11 @@ if __name__ == "__main__":
         crit = torch.nn.CrossEntropyLoss()
         trainer = trainer(model, config, optimizer, crit)
         if config.profile:
+            profiler.start()
             with torch.autograd.profiler.profile(record_shapes=True) as result:
                 with torch.autograd.profiler.record_function("Trainer"):
                     trainer.train((x[0], y[0]), (x[1], y[1]))
+            profiler.stop()
             print(result.key_averages().table(sort_by="cpu_time_total", row_limit=10))        
         else:
             trainer.train((x[0], y[0]), (x[1], y[1]))

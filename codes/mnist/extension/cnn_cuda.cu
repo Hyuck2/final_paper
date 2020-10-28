@@ -3,15 +3,20 @@
 #include <cuda_runtime.h>
 #include <vector>
 
-__global__ void conv2d_ex(torch::Tensor *d_input, torch::Tensor *d_weight, torch::Tensor *d_bias){
+__global__ void conv2d_relu(torch::Tensor *d_input, torch::Tensor *d_weight, torch::Tensor *d_bias){
     /*
-    thread : output channel size
+    thread : output channel size, share weight and bias 
     block : input channel size
     */
     __shared__ float input[];
     __shared__ float output[];
-    if(threadIdx.x == 0){
-        // load 1 channel from input and save to Shared Memory
+    __shared__ float weight[9];
+    __shared__ float bias[9];
+
+    if(threadIdx.x < 9){ // (3,3) size
+        // copy weight and bias to shared memory
+        weight[threadIdx.x] = d_weight[threadIdx.x];
+        bias[threadIdx.x] = d_bias[threadIdx.x];
     }
     __syncthreads();
 }

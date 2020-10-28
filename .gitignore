@@ -12,6 +12,8 @@
 
 # log files
 *.log
+*.dict
+*.sql
 
 # build items
 /codes/example/extension/build/*
