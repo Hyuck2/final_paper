@@ -15,6 +15,8 @@
    - HardWare
      - intel i7-9700k
      - Nvidia RTX2070
+     - DDR4 24GB
+     - SSD 500GB
    - Software
      - Ubuntu 20.04
      - Pytorch 1.6.0
