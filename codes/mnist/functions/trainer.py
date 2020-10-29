@@ -21,7 +21,7 @@ class trainer():
         backward = 0
         for i, (x_i, y_i) in tqdm(enumerate(zip(x, y))):
             start = time.time()
-            y_hat_i = self.model(x_i, list(self.model.parameters()))
+            y_hat_i = self.model(x_i, list(self.model.parameters()))        
             forward += time.time() - start
             loss_i = self.crit(y_hat_i, y_i.squeeze())
             self.optimizer.zero_grad()

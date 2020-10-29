@@ -36,5 +36,3 @@ class cnn(torch.nn.Module):
         if x.dim() == 3:
             x = x.view(-1, 1, x.size(-2), x.size(-1))
         return cnn_cpp.forward(x, parameter)
-
-# use sequential to look prettier

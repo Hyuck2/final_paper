@@ -17,7 +17,7 @@ from models.rnn_cpp import rnn as rnn_cpp
 from models.rnn_cuda import rnn as rnn_cuda
 # profile
 import torch.cuda.profiler as profiler
-import pyprof # CUDA profiler
+import pyprof
 
 def argparser():
     p = argparse.ArgumentParser()
@@ -59,32 +59,9 @@ if __name__ == "__main__":
         device = torch.device('cuda:0')
     else:
         device = torch.device('cpu')
-    
-    if config.profile:
-        pyprof.init()
 
-    # model save and load function needed
-    '''
-    if config.model == 'cnn':
-        model = cnn().to(device)
-    elif config.model == 'cnn_cpp':
-        model = cnn_cpp().to(device)
-    elif config.model == 'cnn_cuda':
-        model = cnn_cuda().to(device)
-    elif config.model == 'fc_cpp':
-        model = fc_cpp().to(device)
-    elif config.model == 'fc_cuda':
-        model = fc_cuda().to(device)
-    elif config.model == 'rnn':
-        model = rnn().to(device)
-    elif config.model == 'rnn_cpp':
-        model = rnn_cpp().to(device)
-    elif config.model == 'rnn_cuda':
-        model = rnn_cuda().to(device)
-    else:
-        model = fc().to(device)
-    '''
     model = get_model(config).to(device)
+
     if config.check:
         print("Number of Parameters : " + str(len(list(model.parameters()))))
         #print(type(model.parameters()))
@@ -108,27 +85,20 @@ if __name__ == "__main__":
         valid_cnt = x.size(0) - train_cnt
         indices = torch.randperm(x.size(0))
         
-        x = torch.index_select(
-            x,
-            dim=0,
-            index=indices
-        ).to(device).split([train_cnt, valid_cnt], dim=0)
-        
-        y = torch.index_select(
-            y,
-            dim=0,
-            index=indices
-        ).to(device).split([train_cnt, valid_cnt], dim=0)
-        
-        optimizer = torch.optim.Adam(model.parameters())
-        crit = torch.nn.CrossEntropyLoss()
-        trainer = trainer(model, config, optimizer, crit)
+
         if config.profile:
-            profiler.start()
-            with torch.autograd.profiler.profile(record_shapes=True) as result:
-                with torch.autograd.profiler.record_function("Trainer"):
-                    trainer.train((x[0], y[0]), (x[1], y[1]))
-            profiler.stop()
-            print(result.key_averages().table(sort_by="cpu_time_total", row_limit=10))        
+            x = torch.index_select(
+                x,
+                dim=0,
+                index=indices
+            ).to(device).split([train_cnt, valid_cnt], dim=0)
+            with torch.autograd.profiler.profile(use_cuda=True, record_shapes=True, profile_memory=True) as prof:
+                model(x[0])
+            #print(prof)
+            print(prof.key_averages().table(sort_by="cpu_time_total"))
+
         else:
+            optimizer = torch.optim.Adam(model.parameters())
+            crit = torch.nn.CrossEntropyLoss()
+            trainer = trainer(model, config, optimizer, crit)
             trainer.train((x[0], y[0]), (x[1], y[1]))
