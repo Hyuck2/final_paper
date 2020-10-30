@@ -34,6 +34,23 @@ torch::Tensor forward(torch::Tensor input, std::vector<torch::Tensor> parameter)
 /*
 check input tensor shape..
 
+input [input_channel][height][width] maybe?
+
+kernel [channel][height][width]
+
+output [input_channel][kernel_channel][height][width]
+
+in MNIST implementation on this paper,
+
+conv2d with 1 padding
+input : 1 x 28 x 28
+kernel : 32 x 3 x 3 (32 weight, bias)
+output : 32 x 28 x 28
+
+conv2d with 1 padding 2 stride
+input : 32 x 28 x 28
+kernel : 32 x 3 x 3
+output : 32 x 14 x 14 ? 
 
 */
 
