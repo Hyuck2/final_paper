@@ -38,7 +38,7 @@ input [input_channel][height][width] maybe?
 
 kernel [channel][height][width]
 
-output [input_channel][kernel_channel][height][width]
+output [kernel_num][height][width] only kernel's channel!!!!
 
 in MNIST implementation on this paper,
 
@@ -54,10 +54,10 @@ output : 32 x 14 x 14 ?
 
 */
 
-torch::Tensor conv2d_relu(torch::Tensor input, torch::Tensor weight, torch::Tensor bias, int input_channel_size, int input_width, int input_height, int kernel_channel){
+torch::Tensor conv2d_relu(torch::Tensor input, torch::Tensor weight, torch::Tensor bias, int input_channel_size, int input_width, int input_height, int kernel_num){
   int current_location;
   torch::Tensor sum;
-  torch::Tensor output; // with padding==1, size = input_channel * input_hight * input_width * kernel_channel
+  torch::Tensor output; // with padding==1, size = input_channel * input_hight * input_width * kernel_num
   // input channel, width, height
   // kernel channel, kernel width, kernel height
   for (int ch=0; ch<input_channel_size; ch++){
@@ -66,7 +66,7 @@ torch::Tensor conv2d_relu(torch::Tensor input, torch::Tensor weight, torch::Tens
         current_location = ch*input_height*input_width + y*input_width + x;
         // top left
         if (x==0 && y==0){
-          for (int k_ch=0; k_ch<kernel_channel; k_ch++){ // kernel channel
+          for (int k_num=0; k_num<kernel_num; k_num++){ // kernel num
             sum = 0;
             for (int k_y=0; k_y<2;k_y++){ // kernel height
               for(int k_x=0; k_x<2;k_x++){ // kernel width
@@ -79,7 +79,7 @@ torch::Tensor conv2d_relu(torch::Tensor input, torch::Tensor weight, torch::Tens
         }
         // top right
         else if (x==input_width-1 && y==0){
-          for (int k_ch=0; k_ch<kernel_channel; k_ch++){ // kernel channel
+          for (int k_num=0; k_num<kernel_num; k_num++){ // kernel channel
             sum = 0;
             for (int k_y=0; k_y<2;k_y++){ // kernel height
               for(int k_x=-1; k_x<1;k_x++){ // kernel width
@@ -92,7 +92,7 @@ torch::Tensor conv2d_relu(torch::Tensor input, torch::Tensor weight, torch::Tens
         }
         // top middle
         else if (y==0){
-          for (int k_ch=0; k_ch<kernel_channel; k_ch++){ // kernel channel
+          for (int k_num=0; k_num<kernel_num; k_num++){ // kernel channel
             sum = 0;
             for (int k_y=0; k_y<2;k_y++){ // kernel height
               for(int k_x=-1; k_x<2;k_x++){ // kernel width
@@ -105,7 +105,7 @@ torch::Tensor conv2d_relu(torch::Tensor input, torch::Tensor weight, torch::Tens
         }
         // bottom left
         else if (x==0 && y==input_height-1){
-          for (int k_ch=0; k_ch<kernel_channel; k_ch++){ // kernel channel
+          for (int k_num=0; k_num<kernel_num; k_num++){ // kernel channel
             sum = 0;
             for (int k_y=-1; k_y<1;k_y++){ // kernel height
               for(int k_x=0; k_x<2;k_x++){ // kernel width
@@ -118,7 +118,7 @@ torch::Tensor conv2d_relu(torch::Tensor input, torch::Tensor weight, torch::Tens
         }
         // bottom right
         else if (x==input_width-1 && y==input_height-1){
-          for (int k_ch=0; k_ch<kernel_channel; k_ch++){ // kernel channel
+          for (int k_num=0; k_num<kernel_num; k_num++){ // kernel channel
             sum = 0;
             for (int k_y=-1; k_y<1;k_y++){ // kernel height
               for(int k_x=-1; k_x<1;k_x++){ // kernel width
@@ -131,7 +131,7 @@ torch::Tensor conv2d_relu(torch::Tensor input, torch::Tensor weight, torch::Tens
         }
         // bottom middle
         else if (y==input_height-1){
-          for (int k_ch=0; k_ch<kernel_channel; k_ch++){ // kernel channel
+          for (int k_num=0; k_num<kernel_num; k_num++){ // kernel channel
             sum = 0;
             for (int k_y=-1; k_y<1;k_y++){ // kernel height
               for(int k_x=-1; k_x<2;k_x++){ // kernel width
@@ -144,7 +144,7 @@ torch::Tensor conv2d_relu(torch::Tensor input, torch::Tensor weight, torch::Tens
         }
         // left middle
         else if (x==0){
-          for (int k_ch=0; k_ch<kernel_channel; k_ch++){ // kernel channel
+          for (int k_num=0; k_num<kernel_num; k_num++){ // kernel channel
             sum = 0;
             for (int k_y=-1; k_y<2;k_y++){ // kernel height
               for(int k_x=0; k_x<2;k_x++){ // kernel width
@@ -157,7 +157,7 @@ torch::Tensor conv2d_relu(torch::Tensor input, torch::Tensor weight, torch::Tens
         }
         // right middle
         else if (x==input_width-1){
-          for (int k_ch=0; k_ch<kernel_channel; k_ch++){ // kernel channel
+          for (int k_num=0; k_num<kernel_num; k_num++){ // kernel channel
             sum = 0;
             for (int k_y=-1; k_y<2;k_y++){ // kernel height
               for(int k_x=-1; k_x<1;k_x++){ // kernel width
@@ -170,7 +170,7 @@ torch::Tensor conv2d_relu(torch::Tensor input, torch::Tensor weight, torch::Tens
         }
         // inside
         else{
-          for (int k_ch=0; k_ch<kernel_channel; k_ch++){ // kernel channel
+          for (int k_num=0; k_num<kernel_num; k_num++){ // kernel channel
             sum = 0;
             for (int k_y=-1; k_y<2;k_y++){ // kernel height
               for(int k_x=-1; k_x<2;k_x++){ // kernel width
