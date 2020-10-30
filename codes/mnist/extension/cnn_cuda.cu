@@ -3,108 +3,6 @@
 #include <cuda_runtime.h>
 #include <vector>
 
-__global__ void conv2d_relu(torch::Tensor *d_input, torch::Tensor *d_weight, torch::Tensor *d_bias){
-    /*
-    thread : output channel size, share weight and bias 
-    block : input channel size
-    */
-    __shared__ float input[];
-    __shared__ float output[];
-    __shared__ float weight[9];
-    __shared__ float bias[9];
-
-    if(threadIdx.x < 9){ // (3,3) size
-        // copy weight and bias to shared memory
-        weight[threadIdx.x] = d_weight[threadIdx.x];
-        bias[threadIdx.x] = d_bias[threadIdx.x];
-    }
-    __syncthreads();
-}
-
-/*
-    __syncthreads();
-    for (int step = 1; step < 64; step*=2){
-        if ((threadIdx.x % (2* step) == 0) && (threadIdx.x < 64)){
-            conv_out[threadIdx.x] += thread_result[threadIdx.x + step];
-        }
-        __syncthreads();
-    }
-    if (threadsIdx.x == 0){
-
-    }
-
-*/
-
-__global__ void convolutionGPU(
-    float *d_Result,
-    float *d_Data,
-    int dataW,
-    int dataH
-    ){
-    // Data cache: threadIdx.x , threadIdx.y
-    __shared__ float data[TILE_W + KERNEL_RADIUS * 2][TILE_W + KERNEL_RADIUS * 2];
-    
-    // global mem address of this thread
-    const int gLoc = threadIdx.x +
-    IMUL(blockIdx.x, blockDim.x) +
-    IMUL(threadIdx.y, dataW) +
-    IMUL(blockIdx.y, blockDim.y) * dataW;
-    
-    // load cache (32x32 shared memory, 16x16 threads blocks)
-    // each threads loads four values from global memory into shared mem
-    // if in image area, get value in global mem, else 0
-    int x, y; // image based coordinate
-    
-    // original image based coordinate
-    const int x0 = threadIdx.x + IMUL(blockIdx.x, blockDim.x);
-    const int y0 = threadIdx.y + IMUL(blockIdx.y, blockDim.y);
-    
-    // case1: upper left
-    x = x0 - KERNEL_RADIUS;
-    y = y0 - KERNEL_RADIUS;
-    if ( x < 0 || y < 0 )
-        data[threadIdx.x][threadIdx.y] = 0;
-    else
-        data[threadIdx.x][threadIdx.y] = d_Data[ gLoc - KERNEL_RADIUS - IMUL(dataW, KERNEL_RADIUS)];
-    
-    // case2: upper right
-    x = x0 + KERNEL_RADIUS;
-    y = y0 - KERNEL_RADIUS;
-    if ( x > dataW-1 || y < 0 )
-        data[threadIdx.x + blockDim.x][threadIdx.y] = 0;
-    else
-        data[threadIdx.x + blockDim.x][threadIdx.y] = d_Data[gLoc + KERNEL_RADIUS - IMUL(dataW, KERNEL_RADIUS)];
-    
-    // case3: lower left
-    x = x0 - KERNEL_RADIUS;
-    y = y0 + KERNEL_RADIUS;
-    if (x < 0 || y > dataH-1)
-        data[threadIdx.x][threadIdx.y + blockDim.y] = 0;
-    else
-        data[threadIdx.x][threadIdx.y + blockDim.y] = d_Data[gLoc - KERNEL_RADIUS + IMUL(dataW, KERNEL_RADIUS)];
-    
-    // case4: lower right
-    x = x0 + KERNEL_RADIUS;
-    y = y0 + KERNEL_RADIUS;
-    if ( x > dataW-1 || y > dataH-1)
-        data[threadIdx.x + blockDim.x][threadIdx.y + blockDim.y] = 0;
-    else
-        data[threadIdx.x + blockDim.x][threadIdx.y + blockDim.y] = d_Data[gLoc + KERNEL_RADIUS + IMUL(dataW, KERNEL_RADIUS)];
-    
-    __syncthreads();
-    
-    // convolution
-    float sum = 0;
-    x = KERNEL_RADIUS + threadIdx.x;
-    y = KERNEL_RADIUS + threadIdx.y;
-    for (int i = -KERNEL_RADIUS; i <= KERNEL_RADIUS; i++)
-    for (int j = -KERNEL_RADIUS; j <= KERNEL_RADIUS; j++)
-    sum += data[x + i][y + j] * d_Kernel[KERNEL_RADIUS + j] * d_Kernel[KERNEL_RADIUS + i];
-    
-    d_Result[gLoc] = sum;
-    }
-    
-    
 
 __global__ void conv2d_00(
     torch::Tensor input, 
@@ -123,10 +21,6 @@ __global__ void conv2d_00(
     input + padding
 
     */
-}
-
-__global__ void conv2d_01(){
-
 }
 
 torch::Tensor forward(torch::Tensor input, std::vector<torch::Tensor> parameter){
