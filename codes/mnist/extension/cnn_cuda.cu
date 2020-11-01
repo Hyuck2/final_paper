@@ -3,8 +3,13 @@
 #include <cuda_runtime.h>
 #include <vector>
 
+/*
+kernel num --> block
+input channel --> threads
+*/
 
-__global__ void conv2d_00(
+
+__global__ void cuda_forward_kernel(
     torch::Tensor input, 
     torch::Tensor output, 
     torch::Tensor weight, 

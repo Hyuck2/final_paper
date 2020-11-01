@@ -1,6 +1,90 @@
 #include <torch/extension.h>
 #include <vector>
 
+torch::Tensor conv2d_forward(torch::Tensor input, torch::Tensor output, torch::Tensor weight, torch::Tensor bias, int kernel_num, int input_channel, int input_width, int input_height){
+  torch::Tensor sum;
+  int current_location;
+  for (int k_num=0; k_num<kernel_num; k_num++){
+    sum=0;
+    for (int i_ch=0; i_ch<input_channel; i_ch++){
+      for (int i_y=0; i_y<input_width; i_y++){
+        for(int i_x=0; i_x<input_height;i_x++){
+          if (i_y == 0 && i_x==0){ // top left
+            for (int k_y=0; k_y<2; k_y++){
+              for (int k_x=0; k_x<2; k_x++){
+                sum += input[i_ch][i_y + k_y][i_x + k_x]*weight[k_num][1+k_y][1+k_x] + bias[k_num][1+k_y][1+k_x];
+              }
+            }
+          }
+          else if (i_y==input_width-1 && i_x==0){ // top right
+            for (int k_y=0; k_y<2; k_y++){
+              for (int k_x=-1; k_x<1; k_x++){
+                sum += input[i_ch][i_y + k_y][i_x + k_x]*weight[k_num][1+k_y][1+k_x] + bias[k_num][1+k_y][1+k_x];
+              }
+            }
+          }
+          else if (i_y==0 && i_x==input_height-1){ // bottom left
+            for (int k_y=-1; k_y<1; k_y++){
+              for (int k_x=0; k_x<2; k_x++){
+                sum += input[i_ch][i_y + k_y][i_x + k_x]*weight[k_num][1+k_y][1+k_x] + bias[k_num][1+k_y][1+k_x];
+              }
+            }
+          }
+          else if (i_y==input_width-1 && i_x==input_height-1){ // bottom right
+            for (int k_y=-1; k_y<1; k_y++){
+              for (int k_x=-1; k_x<1; k_x++){
+                sum += input[i_ch][i_y + k_y][i_x + k_x]*weight[k_num][1+k_y][1+k_x] + bias[k_num][1+k_y][1+k_x];
+              }
+            }
+          }
+          else if (i_x==0){ //top middle
+            for (int k_y=0; k_y<2; k_y++){
+              for (int k_x=-1; k_x<2; k_x++){
+                sum += input[i_ch][i_y + k_y][i_x + k_x]*weight[k_num][1+k_y][1+k_x] + bias[k_num][1+k_y][1+k_x];
+              }
+            }
+          }
+          else if (i_x==input_height-1){ // bottom middle
+            for (int k_y=-1; k_y<1; k_y++){
+              for (int k_x=-1; k_x<2; k_x++){
+                sum += input[i_ch][i_y + k_y][i_x + k_x]*weight[k_num][1+k_y][1+k_x] + bias[k_num][1+k_y][1+k_x];
+              }
+            }
+          }
+          else if (i_y==0){ // left middle
+            for (int k_y=-1; k_y<2; k_y++){
+              for (int k_x=0; k_x<2; k_x++){
+                sum += input[i_ch][i_y + k_y][i_x + k_x]*weight[k_num][1+k_y][1+k_x] + bias[k_num][1+k_y][1+k_x];
+              }
+            }
+          }
+          else if (i_y==input_width-1){ // right middle
+            for (int k_y=-1; k_y<2; k_y++){
+              for (int k_x=-1; k_x<1; k_x++){
+                sum += input[i_ch][i_y + k_y][i_x + k_x]*weight[k_num][1+k_y][1+k_x] + bias[k_num][1+k_y][1+k_x];
+              }
+            }
+          }
+          else{ // else
+            for (int k_y=-1; k_y<2; k_y++){
+              for (int k_x=-1; k_x<2; k_x++){
+                sum += input[i_ch][i_y + k_y][i_x + k_x]*weight[k_num][1+k_y][1+k_x] + bias[k_num][1+k_y][1+k_x];
+              }
+            }
+          }
+        }
+      }
+    }
+    if(sum<0){ // ReLU
+      output[k_num] = 0;
+    }
+    else{
+      output[k_num] = sum;
+    }
+  }
+  return output;
+}
+
 torch::Tensor forward(torch::Tensor input, std::vector<torch::Tensor> parameter){
     torch::Tensor output;
     
