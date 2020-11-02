@@ -86,19 +86,19 @@ if __name__ == "__main__":
         indices = torch.randperm(x.size(0))
         
 
-        if config.profile:
-            x = torch.index_select(
-                x,
-                dim=0,
-                index=indices
-            ).to(device).split([train_cnt, valid_cnt], dim=0)
-            with torch.autograd.profiler.profile(use_cuda=True, record_shapes=True, profile_memory=True) as prof:
-                model(x[0])
-            #print(prof)
-            print(prof.key_averages().table(sort_by="cpu_time_total"))
-
-        else:
-            optimizer = torch.optim.Adam(model.parameters())
-            crit = torch.nn.CrossEntropyLoss()
-            trainer = trainer(model, config, optimizer, crit)
-            trainer.train((x[0], y[0]), (x[1], y[1]))
+        x = torch.index_select(
+            x,
+            dim=0,
+            index=indices
+        ).to(device).split([train_cnt, valid_cnt], dim=0)
+        
+        y = torch.index_select(
+            y,
+            dim=0,
+            index=indices
+        ).to(device).split([train_cnt, valid_cnt], dim=0)
+        
+        optimizer = torch.optim.Adam(model.parameters())
+        crit = torch.nn.CrossEntropyLoss()
+        trainer = trainer(model, config, optimizer, crit)
+        trainer.train((x[0], y[0]), (x[1], y[1]))
