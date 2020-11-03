@@ -1,96 +1,112 @@
 #include <torch/extension.h>
 #include <vector>
+#include <iostream>
 
 torch::Tensor conv2d_forward(torch::Tensor input, torch::Tensor weight, torch::Tensor bias, int kernel_num, int input_channel, int input_width, int input_height){
-  torch::Tensor sum;
-  torch::Tensor output;
+  torch::Tensor sum = torch::zeros({});
+  torch::Tensor output = torch::zeros({64,32,28,28});
+  /*
+  std::cout << "\nweight\n" << std::endl;
+  std::cout << weight << std::endl;
+  std::cout << "\nbias\n" << std::endl;
+  std::cout << bias << std::endl;
+  std::cout << "\nsum\n" << std::endl;
+  std::cout << "\ninput\n" << std::endl;
+  std::cout << input << std::endl;
+  */
   
-  for (int k_num=0; k_num<kernel_num; k_num++){
-    sum=torch::zeros(1);
-    for (int i_ch=0; i_ch<input_channel; i_ch++){
+  for (int batch=0;batch<64;batch++){
+    for (int k_num=0; k_num<kernel_num; k_num++){
       for (int i_y=0; i_y<input_width; i_y++){
         for(int i_x=0; i_x<input_height;i_x++){
-          if (i_y == 0 && i_x==0){ // top left
-            for (int k_y=0; k_y<2; k_y++){
+          for (int i_ch=0; i_ch<input_channel; i_ch++){                
+            sum = torch::zeros({});
+            // top left
+            if (i_y == 0 && i_x==0){
+              for (int k_y=0; k_y<2; k_y++){
+                for (int k_x=0; k_x<2; k_x++){
+                  sum += input[batch][i_ch][i_x + k_x][i_y + k_y] * weight[k_num][0][1+k_x][1+k_y];
+                }
+              }
+            }
+            // top right
+            else if (i_y==0 && i_x==input_width-1){
+              for (int k_y=0; k_y<2; k_y++){
+                for (int k_x=-1; k_x<1; k_x++){
+                  sum += input[batch][i_ch][i_x + k_x][i_y + k_y] * weight[k_num][0][1+k_x][1+k_y];
+                }
+              }
+            }
+            // bottom left
+            else if (i_y==input_height-1 && i_x==0){
+              for (int k_y=-1; k_y<1; k_y++){
               for (int k_x=0; k_x<2; k_x++){
-                torch::add(sum,torch::add(torch::matmul(input[i_ch][i_x + k_x][i_y + k_y], weight[k_num][1+k_x][1+k_y]),bias[k_num][1+k_x][1+k_y]));
+                sum += input[batch][i_ch][i_x + k_x][i_y + k_y] * weight[k_num][0][1+k_x][1+k_y];
               }
             }
           }
-          else if (i_y==input_width-1 && i_x==0){ // top right
-            for (int k_y=0; k_y<2; k_y++){
-              for (int k_x=-1; k_x<1; k_x++){
-                sum += torch::matmul(input[i_ch][i_x + k_x][i_y + k_y], weight[k_num][1+k_x][1+k_y]) + bias[k_num][1+k_x][1+k_y];
-              }
-            }
-          }
-          else if (i_y==0 && i_x==input_height-1){ // bottom left
-            for (int k_y=-1; k_y<1; k_y++){
-              for (int k_x=0; k_x<2; k_x++){
-                sum += torch::matmul(input[i_ch][i_x + k_x][i_y + k_y], weight[k_num][1+k_x][1+k_y]) + bias[k_num][1+k_x][1+k_y];
-              }
-            }
-          }
-          else if (i_y==input_width-1 && i_x==input_height-1){ // bottom right
+          // bottom right
+          else if (i_y==input_height-1 && i_x==input_width-1){
             for (int k_y=-1; k_y<1; k_y++){
               for (int k_x=-1; k_x<1; k_x++){
-                sum += torch::matmul(input[i_ch][i_x + k_x][i_y + k_y], weight[k_num][1+k_x][1+k_y]) + bias[k_num][1+k_x][1+k_y];
+                sum += input[batch][i_ch][i_x + k_x][i_y + k_y] * weight[k_num][0][1+k_x][1+k_y];
               }
             }
           }
-          else if (i_x==0){ //top middle
+          // top middle
+          else if (i_y==0){
             for (int k_y=0; k_y<2; k_y++){
               for (int k_x=-1; k_x<2; k_x++){
-                sum += torch::matmul(input[i_ch][i_x + k_x][i_y + k_y], weight[k_num][1+k_x][1+k_y]) + bias[k_num][1+k_x][1+k_y];
+                sum += input[batch][i_ch][i_x + k_x][i_y + k_y] * weight[k_num][0][1+k_x][1+k_y];
               }
             }
           }
-          else if (i_x==input_height-1){ // bottom middle
+          // bottom middle
+          else if (i_y==input_height-1){
             for (int k_y=-1; k_y<1; k_y++){
               for (int k_x=-1; k_x<2; k_x++){
-                sum += torch::matmul(input[i_ch][i_x + k_x][i_y + k_y], weight[k_num][1+k_x][1+k_y]) + bias[k_num][1+k_x][1+k_y];
+                sum += input[batch][i_ch][i_x + k_x][i_y + k_y] * weight[k_num][0][1+k_x][1+k_y];
               }
             }
           }
-          else if (i_y==0){ // left middle
+          // left middle
+          else if (i_x==0){
             for (int k_y=-1; k_y<2; k_y++){
               for (int k_x=0; k_x<2; k_x++){
-                sum += torch::matmul(input[i_ch][i_x + k_x][i_y + k_y], weight[k_num][1+k_x][1+k_y]) + bias[k_num][1+k_x][1+k_y];
+                sum += input[batch][i_ch][i_x + k_x][i_y + k_y] * weight[k_num][0][1+k_x][1+k_y];
               }
             }
           }
-          else if (i_y==input_width-1){ // right middle
+          // right middle
+          else if (i_x==input_width-1){
             for (int k_y=-1; k_y<2; k_y++){
               for (int k_x=-1; k_x<1; k_x++){
-                sum += torch::matmul(input[i_ch][i_x + k_x][i_y + k_y], weight[k_num][1+k_x][1+k_y]) + bias[k_num][1+k_x][1+k_y];
+                sum += input[batch][i_ch][i_x + k_x][i_y + k_y] * weight[k_num][0][1+k_x][1+k_y];
               }
             }
           }
-          else{ // else
+          // else
+          else{
             for (int k_y=-1; k_y<2; k_y++){
               for (int k_x=-1; k_x<2; k_x++){
-                sum += torch::matmul(input[i_ch][i_x + k_x][i_y + k_y], weight[k_num][1+k_x][1+k_y]) + bias[k_num][1+k_x][1+k_y];
+                sum += input[batch][i_ch][i_x + k_x][i_y + k_y] * weight[k_num][0][1+k_x][1+k_y];
               }
             }
           }
+          output[batch][k_num][i_x][i_y] = sum + bias[k_num];
         }
       }
     }
-    if(0){ // ReLU
-      output[k_num] = 0;
-    }
-    else{
-      output[k_num] = sum;
-    }
+    // relu
+  }
   }
   return output;
 }
 
 torch::Tensor forward(torch::Tensor input, std::vector<torch::Tensor> parameter){
-    torch::Tensor output;
-    
-    //output = torch::nn::functional::detail::conv2d(input, parameter[0] /*weight*/, parameter[1] /*bias*/, 1, 1, 1, 1); // (1, 32, (3, 3), padding = 1)
-    output = conv2d_forward(input, parameter[0], parameter[1], 32, 1, 28, 28);
+    torch::Tensor output;    
+    output = torch::nn::functional::detail::conv2d(input, parameter[0] /*weight*/, parameter[1] /*bias*/, 1, 1, 1, 1); // (1, 32, (3, 3), padding = 1)
+    //output = conv2d_forward(input, parameter[0], parameter[1], 32, 1, 28, 28);
     output = torch::nn::functional::relu(output);
     output = torch::nn::functional::detail::conv2d(output, parameter[2], parameter[3], 2, 1, 1, 1); // (32, 32, (3, 3), stride=2, padding=1)
     output = torch::nn::functional::relu(output);
@@ -117,28 +133,6 @@ torch::Tensor forward(torch::Tensor input, std::vector<torch::Tensor> parameter)
     output = torch::nn::functional::softmax(output, -1);
     return output;
 }
-/*
-check input tensor shape..
-
-input [input_channel][height][width] maybe?
-
-kernel [channel][height][width]
-
-output [kernel_num][height][width] only kernel's channel!!!!
-
-in MNIST implementation on this paper,
-
-conv2d with 1 padding
-input : 1 x 28 x 28
-kernel : 32 x 3 x 3 (32 weight, bias)
-output : 32 x 28 x 28
-
-conv2d with 1 padding 2 stride
-input : 32 x 28 x 28
-kernel : 32 x 3 x 3
-output : 32 x 14 x 14 ? 
-
-*/
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   m.def("forward", &forward, "cnn forward (CPP)");
