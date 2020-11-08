@@ -74,12 +74,36 @@ __global__ void forward_kernel(
   */
 }
 
-torch::Tensor forward(torch::Tensor input, std::vector<torch::Tensor> parameter){
-    AT_DISPATCH_FLOATING_TYPES(.type(), "cuda_forward", ([&] {
-      forward_kernel<scalar_t><<<64,784>>>(
+/*
+784 -> 500 -> 400 -> 300 -> 200 -> 100
+*/
 
-      );
+torch::Tensor forward(torch::Tensor input, std::vector<torch::Tensor> parameter){
+  torch::Tensor output = torch::zeros({500});
+  
+  AT_DISPATCH_FLOATING_TYPES(input.type(), "cuda_forward", ([&] {
+    forward_kernel<scalar_t><<<64,784>>>( // block/thread : batchsize/imgsize
+      input.packed_accessor32<scalar_t,2,torch::RestrictPtrTraits>(),
+      parameter[0].packed_accessor32<scalar_t,2,torch::RestrictPtrTraits>(),
+      parameter[1].packed_accessor32<scalar_t,2,torch::RestrictPtrTraits>(),
+      output.packed_accessor32<scalar_t,2,torch::RestrictPtrTraits>());
     }));
+  
+    output = torch::nn::functional::relu(output);
+    output = torch::nn::functional::linear(output, parameter[2], parameter[3]);
+    output = torch::nn::functional::relu(output);
+    output = torch::nn::functional::linear(output, parameter[4], parameter[5]);
+    output = torch::nn::functional::relu(output);
+    output = torch::nn::functional::linear(output, parameter[6], parameter[7]);
+    output = torch::nn::functional::relu(output);
+    output = torch::nn::functional::linear(output, parameter[8], parameter[9]);
+    output = torch::nn::functional::relu(output);
+    output = torch::nn::functional::linear(output, parameter[10], parameter[11]);
+    output = torch::nn::functional::relu(output);
+    output = torch::nn::functional::linear(output, parameter[12], parameter[13]);
+    output = torch::nn::functional::softmax(output, -1);
+  
+    std::cout<<output<<std::endl;
     return output;
 }
 
@@ -106,5 +130,4 @@ inline Tensor linear(const Tensor& input, const Tensor& weight,
 
 relu
 found on torch/csrc/api/include/torch/nn/functional/activation.h
-
 */
