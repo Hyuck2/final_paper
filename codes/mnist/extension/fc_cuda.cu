@@ -5,10 +5,10 @@
 
 template <typename scalar_t>
 __global__ void forward_kernel(
-  torch::PackedTensorAccessor32<scalar_t,2,torch::RestrictPtrTraits> input,
-  torch::PackedTensorAccessor32<scalar_t,2,torch::RestrictPtrTraits> weight,
-  torch::PackedTensorAccessor32<scalar_t,2,torch::RestrictPtrTraits> bias,
-  torch::PackedTensorAccessor32<scalar_t,2,torch::RestrictPtrTraits> output
+  scalar_t* __restict__ input,
+  scalar_t* __restict__ weight,
+  scalar_t* __restict__ bias,
+  scalar_t* __restict__ output
 ){
   /*
   input
@@ -83,10 +83,10 @@ torch::Tensor forward(torch::Tensor input, std::vector<torch::Tensor> parameter)
   
   AT_DISPATCH_FLOATING_TYPES(input.type(), "cuda_forward", ([&] {
     forward_kernel<scalar_t><<<64,784>>>( // block/thread : batchsize/imgsize
-      input.packed_accessor32<scalar_t,2,torch::RestrictPtrTraits>(),
-      parameter[0].packed_accessor32<scalar_t,2,torch::RestrictPtrTraits>(),
-      parameter[1].packed_accessor32<scalar_t,2,torch::RestrictPtrTraits>(),
-      output.packed_accessor32<scalar_t,2,torch::RestrictPtrTraits>());
+      input.data<scalar_t>(),
+      parameter.data<scalar_t>(),
+      parameter.data<scalar_t>(),
+      output.data<scalar_t>());
     }));
   
     output = torch::nn::functional::relu(output);
