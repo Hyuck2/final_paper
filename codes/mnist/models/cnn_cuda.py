@@ -33,5 +33,3 @@ class cnn(torch.nn.Module):
     
     def forward(self, x, parameter=[]):
         return cnn_cuda.forward(x, parameter)
-
-# use sequential to look prettier

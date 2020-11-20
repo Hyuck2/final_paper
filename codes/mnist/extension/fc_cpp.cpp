@@ -18,7 +18,6 @@ torch::Tensor forward(torch::Tensor input, std::vector<torch::Tensor> parameter)
     output = torch::nn::functional::relu(output);
     output = torch::nn::functional::linear(output, parameter[12], parameter[13]);
     output = torch::nn::functional::softmax(output, -1);
-    std::cout<<output<<std::endl;
     return output;
 }
 
